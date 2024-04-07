@@ -23,7 +23,7 @@
         </activity>
 
         <receiver android:name=".MyAppWidgetProvider"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="ACTION_WIDGET_CLICKED" />

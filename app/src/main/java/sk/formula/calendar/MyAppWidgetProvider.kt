@@ -11,12 +11,16 @@ import kotlin.random.Random
 
 
 class MyAppWidgetProvider : AppWidgetProvider() {
+
     companion object {
         private const val WIDGET_CLICK = "widgetsclick"
-        private const val WIDGET_ID_EXTRA = "widget_id_extra"
     }
 
-    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+    override fun onUpdate(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetIds: IntArray
+    ) {
         // There may be multiple widgets active, so update all of them
         for (appWidgetId in appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId)
@@ -33,82 +37,70 @@ class MyAppWidgetProvider : AppWidgetProvider() {
 
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
-        if (WIDGET_CLICK == intent.action) {
-            val appWidgetManager = AppWidgetManager.getInstance(context)
-            val views = RemoteViews(context.packageName, R.layout.widget_layout)
-            val randomNumber = Random.nextInt(0, 100_000)
-            val lastUpdate = "Random: $randomNumber"
-            val appWidgetId = intent.getIntExtra(WIDGET_ID_EXTRA, 0)
-            views.setTextViewText(R.id.widget_title, lastUpdate)
-            appWidgetManager.updateAppWidget(appWidgetId, views)
+
+        val action = intent.action ?: ""
+
+        if (context == null || action != WIDGET_CLICK) {
+            return;
+        }
+
+        val prefs = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
+
+        for (n in 0..10) {
+            prefs.edit().putString(
+                "widgetText",
+                ((prefs.getString("widgetText", "0") ?: "0").toInt() + 1).toString()
+            ).apply()
+
+            updateWidgets(context)
+
+            Thread.sleep(1000)
         }
     }
 
-    private fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
-        val views = RemoteViews(context.packageName, R.layout.widget_layout)
-        val randomNumber = Random.nextInt(0, 100_000)
-        val lastUpdate = "Random: $randomNumber"
-        views.setTextViewText(R.id.widget_title, lastUpdate)
-        views.setOnClickPendingIntent(R.id.reload, getPendingSelfIntent(context, appWidgetId, WIDGET_CLICK))
-        appWidgetManager.updateAppWidget(appWidgetId, views)
+    private fun updateWidgets(context: Context) {
+        val manager = AppWidgetManager.getInstance(context)
+        val ids = manager.getAppWidgetIds(ComponentName(context, javaClass))
+
+        ids.forEach { id -> updateAppWidget(context, manager, id) }
     }
 
-    private fun getPendingSelfIntent(context: Context, appWidgetId: Int, action: String): PendingIntent {
+
+    private fun pendingIntent(
+        context: Context?,
+        action: String,
+        appWidgetId: Int
+    ): PendingIntent? {
         val intent = Intent(context, javaClass)
         intent.action = action
-        intent.putExtra(WIDGET_ID_EXTRA, appWidgetId)
-        return PendingIntent.getBroadcast(context, appWidgetId, intent, 0)
+
+        return PendingIntent.getBroadcast(
+            context,
+            appWidgetId,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+        )
     }
 
+    private fun updateAppWidget(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetId: Int
+    ) {
+        val prefs = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
+        val widgetText = prefs.getString("widgetText", "0")
+        val views = RemoteViews(context.packageName, R.layout.widget_layout)
 
+        val randomNumber = Random.nextInt(0, 100_000)
+        val rng = "Random: $randomNumber"
 
+        views.setTextViewText(R.id.appwidget_text, rng)
+        views.setOnClickPendingIntent(
+            R.id.button, pendingIntent(
+                context, WIDGET_CLICK, appWidgetId
+            )
+        )
 
-    /*
-
-    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
-        Log.e("Mamamaevu", "Mamamaevu")
-        for (appWidgetId in appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId)
-        }
+        appWidgetManager.updateAppWidget(appWidgetId, views)
     }
-
-    override fun onReceive(context: Context?, intent: Intent?) {
-        super.onReceive(context, intent)
-
-        if (intent?.action == "ACTION_WIDGET_CLICKED") {
-            // Handle widget click event here
-            // For now, let's just log it
-            println("Widget clicked!")
-            Log.e("Mamamaevu", "Mamamaevu")
-        }
-    }
-
-    companion object {
-        internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
-//            val remoteViews = RemoteViews(context.packageName, R.layout.widget_layout)
-//
-//            val randomNumber = Random.nextInt(0, 100_000);
-//
-//            // Update your widget's content
-//            remoteViews.setTextViewText(R.id.widget_title, "rng: $randomNumber")
-//
-//            // Update the widget
-//            appWidgetManager.updateAppWidget(appWidgetId, remoteViews)
-
-            val views = RemoteViews(context.packageName, R.layout.widget_layout)
-
-            // Set up a click listener
-            val intent = Intent(context, MyAppWidgetProvider::class.java)
-            intent.action = "ACTION_WIDGET_CLICKED"
-
-            val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-            views.setOnClickPendingIntent(R.id.reload, pendingIntent)
-
-            val randomNumber = Random.nextInt(0, 100_000);
-            views.setTextViewText(R.id.widget_title, "rng: $randomNumber")
-
-            // Update the widget
-            appWidgetManager.updateAppWidget(appWidgetId, views)
-        }
-    }*/
 }
