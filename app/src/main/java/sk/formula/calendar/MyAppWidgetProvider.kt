@@ -94,7 +94,7 @@ class MyAppWidgetProvider : AppWidgetProvider() {
         val randomNumber = Random.nextInt(0, 100_000)
         val rng = "Random: $randomNumber"
 
-        views.setTextViewText(R.id.appwidget_text, rng)
+        views.setTextViewText(R.id.t11, rng)
         views.setOnClickPendingIntent(
             R.id.button, pendingIntent(
                 context, WIDGET_CLICK, appWidgetId
