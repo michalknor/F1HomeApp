@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="1000px"
     android:layout_height="600px"
+    android:gravity="center"
     android:orientation="vertical"
     android:background="@drawable/monaco">
 
@@ -12,24 +13,21 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:layout_marginLeft="50sp"
+            android:layout_marginStart="50sp"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:src="@drawable/flag_bahrain" />
 
         <TextView
+            style="@style/WidgetTextStyle"
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="20sp"
+            android:layout_marginStart="20sp"
             android:text="1. Bahrain GP"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
             android:gravity="center"
-            android:textSize="24sp"
-            android:shadowColor="#000000"
-            android:shadowDx="1.5"
-            android:shadowDy="1.3"
-            android:shadowRadius="1.6"/>
+            android:textSize="24sp"/>
 
     </LinearLayout>
 
@@ -39,43 +37,37 @@
         android:orientation="horizontal">
 
         <TextView
+            style="@style/WidgetTextStyle"
             android:id="@+id/t11"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20sp"
+            android:layout_marginStart="20sp"
             android:text="Practice 1"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
             android:textSize="24sp"
-            android:shadowColor="#000000"
-            android:shadowDx="1.5"
-            android:shadowDy="1.3"
-            android:shadowRadius="1.6"/>
+            android:shadowColor="#000000"/>
 
         <TextView
+            style="@style/WidgetTextStyle"
             android:id="@+id/t12"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20sp"
+            android:layout_marginStart="20sp"
             android:text="29. 2."
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
             android:textSize="24sp"
-            android:shadowColor="#000000"
-            android:shadowDx="1.5"
-            android:shadowDy="1.3"
-            android:shadowRadius="1.6"/>
+            android:shadowColor="#000000"/>
 
         <TextView
+            style="@style/WidgetTextStyle"
             android:id="@+id/t13"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20sp"
+            android:layout_marginStart="20sp"
             android:text="12:30"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
             android:textSize="24sp"
-            android:shadowColor="#000000"
-            android:shadowDx="1.5"
-            android:shadowDy="1.3"
-            android:shadowRadius="1.6"/>
+            android:shadowColor="#000000"/>
 
     </LinearLayout>
 
@@ -86,43 +78,34 @@
         android:orientation="horizontal">
 
         <TextView
+            style="@style/WidgetTextStyle"
             android:id="@+id/t21"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20sp"
+            android:layout_marginStart="20sp"
             android:text="Practice 1"
             android:textSize="24sp"
-            android:textColor="#FFFFFF"
-            android:shadowColor="#000000"
-            android:shadowDx="1.5"
-            android:shadowDy="1.3"
-            android:shadowRadius="1.6"/>
+            android:textColor="@color/white"/>
 
         <TextView
+            style="@style/WidgetTextStyle"
             android:id="@+id/t22"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20sp"
+            android:layout_marginStart="20sp"
             android:text="29. 2."
             android:textSize="24sp"
-            android:textColor="#FFFFFF"
-            android:shadowColor="#000000"
-            android:shadowDx="1.5"
-            android:shadowDy="1.3"
-            android:shadowRadius="1.6"/>
+            android:textColor="@color/white"/>
 
         <TextView
+            style="@style/WidgetTextStyle"
             android:id="@+id/t23"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20sp"
+            android:layout_marginStart="20sp"
             android:text="12:30"
-            android:textColor="#FFFFFF"
-            android:textSize="24sp"
-            android:shadowColor="#000000"
-            android:shadowDx="1.5"
-            android:shadowDy="1.3"
-            android:shadowRadius="1.6"/>
+            android:textColor="@color/white"
+            android:textSize="24sp"/>
 
     </LinearLayout>
 
@@ -132,43 +115,34 @@
         android:orientation="horizontal">
 
         <TextView
+            style="@style/WidgetTextStyle"
             android:id="@+id/t31"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20sp"
+            android:layout_marginStart="20sp"
             android:text="Practice 1"
-            android:textColor="#FFFFFF"
-            android:textSize="24sp"
-            android:shadowColor="#000000"
-            android:shadowDx="1.5"
-            android:shadowDy="1.3"
-            android:shadowRadius="1.6"/>
+            android:textColor="@color/white"
+            android:textSize="24sp"/>
 
         <TextView
+            style="@style/WidgetTextStyle"
             android:id="@+id/t32"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20sp"
+            android:layout_marginStart="20sp"
             android:text="29. 2."
-            android:textColor="#FFFFFF"
-            android:textSize="24sp"
-            android:shadowColor="#000000"
-            android:shadowDx="1.5"
-            android:shadowDy="1.3"
-            android:shadowRadius="1.6"/>
+            android:textColor="@color/white"
+            android:textSize="24sp"/>
 
         <TextView
+            style="@style/WidgetTextStyle"
             android:id="@+id/t33"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20sp"
+            android:layout_marginStart="20sp"
             android:text="12:30"
-            android:textColor="#FFFFFF"
-            android:textSize="24sp"
-            android:shadowColor="#000000"
-            android:shadowDx="1.5"
-            android:shadowDy="1.3"
-            android:shadowRadius="1.6" />
+            android:textColor="@color/white"
+            android:textSize="24sp" />
 
     </LinearLayout>
 
@@ -178,43 +152,34 @@
         android:orientation="horizontal">
 
         <TextView
+            style="@style/WidgetTextStyle"
             android:id="@+id/t41"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20sp"
+            android:layout_marginStart="20sp"
             android:text="Practice 1"
-            android:textColor="#FFFFFF"
-            android:textSize="24sp"
-            android:shadowColor="#000000"
-            android:shadowDx="1.5"
-            android:shadowDy="1.3"
-            android:shadowRadius="1.6"/>
+            android:textColor="@color/white"
+            android:textSize="24sp"/>
 
         <TextView
+            style="@style/WidgetTextStyle"
             android:id="@+id/t42"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20sp"
+            android:layout_marginStart="20sp"
             android:text="29. 2."
-            android:textColor="#FFFFFF"
-            android:textSize="24sp"
-            android:shadowColor="#000000"
-            android:shadowDx="1.5"
-            android:shadowDy="1.3"
-            android:shadowRadius="1.6" />
+            android:textColor="@color/white"
+            android:textSize="24sp" />
 
         <TextView
+            style="@style/WidgetTextStyle"
             android:id="@+id/t43"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20sp"
+            android:layout_marginStart="20sp"
             android:text="12:30"
-            android:textColor="#FFFFFF"
-            android:textSize="24sp"
-            android:shadowColor="#000000"
-            android:shadowDx="1.5"
-            android:shadowDy="1.3"
-            android:shadowRadius="1.6"/>
+            android:textColor="@color/white"
+            android:textSize="24sp"/>
 
     </LinearLayout>
 
@@ -224,47 +189,36 @@
         android:orientation="horizontal">
 
         <TextView
+            style="@style/WidgetTextStyle"
             android:id="@+id/t51"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20sp"
+            android:layout_marginStart="20sp"
             android:text="Practice 1"
-            android:textColor="#FFFFFF"
-            android:textSize="24sp"
-            android:shadowColor="#000000"
-            android:shadowDx="1.5"
-            android:shadowDy="1.3"
-            android:shadowRadius="1.6"/>
+            android:textColor="@color/white"
+            android:textSize="24sp"/>
 
         <TextView
+            style="@style/WidgetTextStyle"
             android:id="@+id/t52"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20sp"
+            android:layout_marginStart="20sp"
             android:text="29. 2."
-            android:textColor="#FFFFFF"
-            android:textSize="24sp"
-            android:shadowColor="#000000"
-            android:shadowDx="1.5"
-            android:shadowDy="1.3"
-            android:shadowRadius="1.6"/>
+            android:textColor="@color/white"
+            android:textSize="24sp"/>
 
         <TextView
+            style="@style/WidgetTextStyle"
             android:id="@+id/t53"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20sp"
+            android:layout_marginStart="20sp"
             android:text="12:30"
-            android:textColor="#FFFFFF"
-            android:textSize="24sp"
-            android:shadowColor="#000000"
-            android:shadowDx="1.5"
-            android:shadowDy="1.3"
-            android:shadowRadius="1.6"/>
+            android:textColor="@color/white"
+            android:textSize="24sp"/>
 
     </LinearLayout>
-
-
 
     <Button
         android:id="@+id/button"
