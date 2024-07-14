@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">F1Calendar</string>
     <string name="count_0">0</string>
+    <string name="host">Host</string>
+    <string name="ip">Ip</string>
+    <string name="port">Port</string>
+    <string name="save">Save</string>
 </resources>
