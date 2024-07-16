@@ -7,16 +7,20 @@ object SharedPreferences {
 
     private const val SETTINGS_PREFS_NAME = "settings"
 
-    fun saveHost(context: Context, host: String, port: String) {
+    fun saveHost(context: Context, ip: String, port: String) {
         context.getSharedPreferences(SETTINGS_PREFS_NAME, Context.MODE_PRIVATE).edit()
-            .putString("host", "$host:$port").apply()
+            .putString("ip", "$ip").putString("port", "$port").apply()
     }
 
-    fun getHost(context: Context): String? {
-        val appContext = context.applicationContext
-        val sharedPreferences: SharedPreferences =
-            appContext.getSharedPreferences(SETTINGS_PREFS_NAME, Context.MODE_PRIVATE)
+    fun getIp(context: Context): String {
+        return context.applicationContext.getSharedPreferences(SETTINGS_PREFS_NAME, Context.MODE_PRIVATE).getString("ip", "").toString()
+    }
 
-        return sharedPreferences.getString("host", "host is not specified")
+    fun getPort(context: Context): String {
+        return context.applicationContext.getSharedPreferences(SETTINGS_PREFS_NAME, Context.MODE_PRIVATE).getString("port", "").toString()
+    }
+
+    fun getHost(context: Context): String {
+        return getIp(context) + ":" + getPort(context)
     }
 }
