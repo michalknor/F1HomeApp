@@ -7,13 +7,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -22,12 +26,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import kotlinx.coroutines.CoroutineScope
@@ -40,14 +48,6 @@ import java.net.URL
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_main)
-//
-//        findViewById<ImageView>(R.id.settings).setOnClickListener {
-//            val intent = Intent(this, HostInfoActivity::class.java)
-//            startActivity(intent)
-//        }
-//
-//        fetchApiData(findViewById<TextView>(R.id.textasd))
 
         setContent {
             F1CalendarTheme {
@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxWidth(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Column {
+                    Column (modifier = Modifier.verticalScroll(rememberScrollState())) {
                         GrandPrixLayout()
                         GrandPrixLayout()
                     }
@@ -91,38 +91,36 @@ fun GrandPrixLayout() {
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
             .paint(painterResource(id = R.drawable.monaco))
-            .padding(Dp(16f)),
+            .padding(16f.dp)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = Dp(8f)),
+            Modifier.padding(start = 8f.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.flag_bahrain),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(Dp(50f))
-                    .padding(start = Dp(16f)),
+                    .size(50f.dp)
+                    .width(100f.dp),
                 contentScale = ContentScale.Fit
             )
             OutlineText(
+                height = 50f,
                 text = "1. Bahrain GP",
                 fontSize = 24f,
                 outlineColor = Color.Black,
                 textColor = Color.White,
-                outlineThickness = 1f,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = Dp(20f))
+                fontWeight = FontWeight.Bold
             )
         }
 
-        ScheduleRow("Practice 1", "29. 2.", "12:30")
-        ScheduleRow("Practice 2", "29. 2.", "15:30")
-        ScheduleRow("Practice 3", "1. 3.", "11:00")
+        ScheduleRow("Practice 1", "29. 2.", "12:30 - 13:30")
+        ScheduleRow("Practice 2", "29. 2.", "15:30 - 16:30")
+        ScheduleRow("Practice 3", "1. 3.", "11:00 - 12:00")
         ScheduleRow("Qualifying", "1. 3.", "15:00")
         ScheduleRow("Race", "2. 3.", "14:00")
     }
+    Spacer(modifier = Modifier.height(5f.dp))
 }
 
 @Composable
@@ -130,62 +128,57 @@ fun ScheduleRow(session: String, date: String, time: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = Dp(4f), horizontal = Dp(4f)),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(horizontal = 2f.dp)
     ) {
         OutlineText(
             text = session,
-            fontSize = 15f,
-            outlineColor = Color.Black,
-            textColor = Color.White,
-            outlineThickness = 1f
+            fontSize = 20f,
+            percentageWidth = 0.4f
         )
         OutlineText(
             text = date,
-            fontSize = 15f,
-            outlineColor = Color.Black,
-            textColor = Color.White,
-            outlineThickness = 1f
+            fontSize = 20f,
+            percentageWidth = 0.4f
         )
         OutlineText(
             text = time,
-            fontSize = 15f,
-            outlineColor = Color.Black,
-            textColor = Color.White,
-            outlineThickness = 1f
+            fontSize = 20f,
+            percentageWidth = 1f
         )
     }
 }
 
+@OptIn(ExperimentalTextApi::class)
 @Composable
 fun OutlineText(
+    height: Float = 30f,
     text: String = "asd",
     fontSize: Float = 50f,
     outlineColor: Color = Color.Black,
     textColor: Color = Color.White,
-    outlineThickness: Float = 1f,
     fontWeight: FontWeight = FontWeight.Normal,
-    modifier: Modifier = Modifier
+    percentageWidth: Float = 1f
 ) {
 
-    // Function to create a text offset for the outline effect
-    @Composable
-    fun OutlineTextLayer(offset: DpOffset) {
+    BoxWithConstraints(contentAlignment = Alignment.Center, modifier = Modifier.height(height.dp)
+    ) {
+        val maxWidth = constraints.maxWidth
+
         Text(
             text = text,
             color = outlineColor,
             fontSize = TextUnit(fontSize, TextUnitType.Sp),
             fontWeight = fontWeight,
-            modifier = modifier.offset(x = offset.x, y = offset.y)
+            modifier = Modifier.width((maxWidth * percentageWidth).pxToDp()),
+            style = TextStyle.Default.copy(
+                fontSize = TextUnit(fontSize, TextUnitType.Sp),
+                drawStyle = Stroke(
+                    miter = 10f,
+                    width = 8f,
+                    join = StrokeJoin.Round
+                )
+            )
         )
-    }
-
-    Box {
-        // Create outline by placing text at various offsets
-        OutlineTextLayer(offset = DpOffset(-Dp(outlineThickness), -Dp(outlineThickness)))
-        OutlineTextLayer(offset = DpOffset(Dp(outlineThickness), -Dp(outlineThickness)))
-        OutlineTextLayer(offset = DpOffset(-Dp(outlineThickness), Dp(outlineThickness)))
-        OutlineTextLayer(offset = DpOffset(Dp(outlineThickness), Dp(outlineThickness)))
 
         // Main text in the center
         Text(
@@ -193,7 +186,13 @@ fun OutlineText(
             color = textColor,
             fontSize = TextUnit(fontSize, TextUnitType.Sp),
             fontWeight = fontWeight,
-            modifier = modifier
+            modifier = Modifier
+                .width((maxWidth * percentageWidth).pxToDp())
+                .align(Alignment.Center),
+            style = TextStyle.Default.copy()
         )
     }
 }
+
+@Composable
+fun Float.pxToDp() = with(LocalDensity.current) { this@pxToDp.toDp() }

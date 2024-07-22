@@ -24,7 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import sk.formula.calendar.ui.theme.F1CalendarTheme
@@ -62,7 +62,7 @@ fun HostScreen(ip: String, port: String) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(Dp(16f)),
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -70,13 +70,13 @@ fun HostScreen(ip: String, port: String) {
             text = "Host",
             fontSize = TextUnit(20f, TextUnitType.Sp),
             color = Color.Black,
-            modifier = Modifier.padding(top = Dp(100f), bottom = Dp(20f))
+            modifier = Modifier.padding(top = 100.dp, bottom = 20.dp)
         )
         OutlinedTextField(
             value = ip,
             onValueChange = { ipRemember = it },
             label = { Text("IP") },
-            modifier = Modifier.width(Dp(200f)),
+            modifier = Modifier.width(200.dp),
             textStyle = androidx.compose.ui.text.TextStyle(
                 fontSize = TextUnit(
                     20f,
@@ -88,7 +88,7 @@ fun HostScreen(ip: String, port: String) {
             value = port,
             onValueChange = { portRemember = it },
             label = { Text("Port") },
-            modifier = Modifier.width(Dp(200f)),
+            modifier = Modifier.width(200.dp),
             textStyle = androidx.compose.ui.text.TextStyle(
                 fontSize = TextUnit(
                     20f,
@@ -101,7 +101,7 @@ fun HostScreen(ip: String, port: String) {
                 SharedPreferences.saveHost(context, ip, port)
                 Toast.makeText(context, "Host saved", Toast.LENGTH_SHORT).show()
             },
-            modifier = Modifier.padding(top = Dp(20f))
+            modifier = Modifier.padding(top = 20.dp)
         ) {
             Text(text = "Save", fontSize = TextUnit(15f, TextUnitType.Sp))
         }
