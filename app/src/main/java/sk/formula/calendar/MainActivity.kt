@@ -1,8 +1,6 @@
 package sk.formula.calendar
 
 import android.os.Bundle
-import android.util.Log
-import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -41,9 +39,9 @@ import androidx.compose.ui.unit.TextUnitType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import sk.formula.calendar.ui.theme.F1CalendarTheme
-import java.net.URL
+import kotlinx.serialization.json.*
+import sk.formula.calendar.network.ApiService
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,31 +53,31 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxWidth(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Column (modifier = Modifier.verticalScroll(rememberScrollState())) {
+                    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                         GrandPrixLayout()
                         GrandPrixLayout()
                     }
                 }
             }
         }
-    }
 
-    private fun fetchApiData(textView: TextView) {
         val context = this
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val host = SharedPreferences.getHost(context)
-                val apiResponse = URL("http://$host/api/calendar?currentVersion=0&year=2024").readText()
 
-                Log.e("FetchApiData", apiResponse)
-
-                withContext(Dispatchers.Main) {
-                    textView.text = apiResponse
+        CoroutineScope(Dispatchers.Main).launch {
+            val calendar = ApiService.fetchCalendar(context, 2024)
+            if (calendar != null) {
+                setContent {
+                    F1CalendarTheme {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            color = MaterialTheme.colorScheme.background
+                        ) {
+                            //TODO
+                        }
+                    }
                 }
-
-            } catch (e: Exception) {
-                Log.e("FetchApiData", "Exception: ${e.message}")
             }
+
         }
     }
 }
@@ -160,7 +158,8 @@ fun OutlineText(
     percentageWidth: Float = 1f
 ) {
 
-    BoxWithConstraints(contentAlignment = Alignment.Center, modifier = Modifier.height(height.dp)
+    BoxWithConstraints(
+        contentAlignment = Alignment.Center, modifier = Modifier.height(height.dp)
     ) {
         val maxWidth = constraints.maxWidth
 

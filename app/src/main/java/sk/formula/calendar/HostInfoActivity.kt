@@ -41,7 +41,10 @@ class HostInfoActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    HostScreen(SharedPreferences.getIp(this), SharedPreferences.getPort(this))
+                    HostScreen(
+                        SharedPreferences.getIp(this),
+                        SharedPreferences.getPort(this)
+                    )
                 }
             }
         }
