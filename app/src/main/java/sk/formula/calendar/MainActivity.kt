@@ -41,25 +41,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import sk.formula.calendar.ui.theme.F1CalendarTheme
 import kotlinx.serialization.json.*
+import sk.formula.calendar.model.Calendar
+import sk.formula.calendar.model.GrandPrix
 import sk.formula.calendar.network.ApiService
+import kotlinx.serialization.decodeFromString
+import sk.formula.calendar.model.Event
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setContent {
-            F1CalendarTheme {
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                        GrandPrixLayout()
-                        GrandPrixLayout()
-                    }
-                }
-            }
-        }
 
         val context = this
 
@@ -72,7 +62,7 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.fillMaxWidth(),
                             color = MaterialTheme.colorScheme.background
                         ) {
-                            //TODO
+                            CalendarLayout(calendar)
                         }
                     }
                 }
@@ -83,8 +73,21 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-@Preview
-fun GrandPrixLayout() {
+fun CalendarLayout(calendar: Calendar) {
+    Column(
+        modifier = Modifier.verticalScroll(rememberScrollState())
+    ) {
+        for ((round, grandPrix) in calendar.grandPrixes) {
+            GrandPrixLayout(round, grandPrix)
+        }
+    }
+}
+
+@Composable
+fun GrandPrixLayout(round: String, grandPrix: GrandPrix?) {
+    if (grandPrix == null) {
+        return
+    }
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
@@ -104,19 +107,21 @@ fun GrandPrixLayout() {
             )
             OutlineText(
                 height = 50f,
-                text = "1. Bahrain GP",
+                text = round + ". " + grandPrix.name + " GP",
                 fontSize = 24f,
                 outlineColor = Color.Black,
                 textColor = Color.White,
                 fontWeight = FontWeight.Bold
             )
         }
+        
+        val events: Map<String, Event> = grandPrix.events
 
-        ScheduleRow("Practice 1", "29. 2.", "12:30 - 13:30")
-        ScheduleRow("Practice 2", "29. 2.", "15:30 - 16:30")
-        ScheduleRow("Practice 3", "1. 3.", "11:00 - 12:00")
-        ScheduleRow("Qualifying", "1. 3.", "15:00")
-        ScheduleRow("Race", "2. 3.", "14:00")
+        events.get("1")?.let { ScheduleRow(it.abbreviation, it.timeFrom, "12:30 - 13:30") }
+        events.get("2")?.let { ScheduleRow(it.abbreviation, it.timeFrom, "12:30 - 13:30") }
+        events.get("3")?.let { ScheduleRow(it.abbreviation, it.timeFrom, "12:30 - 13:30") }
+        events.get("4")?.let { ScheduleRow(it.abbreviation, it.timeFrom, "12:30 - 13:30") }
+        events.get("5")?.let { ScheduleRow(it.abbreviation, it.timeFrom, "12:30 - 13:30") }
     }
     Spacer(modifier = Modifier.height(5f.dp))
 }
@@ -190,6 +195,40 @@ fun OutlineText(
                 .align(Alignment.Center),
             style = TextStyle.Default.copy()
         )
+    }
+}
+
+
+@Preview
+@Composable
+fun PreviewCalendar() {
+    val json = """
+        {
+          "grandPrixes": {
+            "1": {
+              "name": "Bahrain",
+              "cancelled": false,
+              "location": {
+                "circuit": "Bahrain International Circuit",
+                "city": "Sakhir",
+                "country": {
+                  "name": "Bahrain",
+                  "abbreviation": "bh"
+                }
+              }
+            }
+          }
+        }
+    """.trimIndent()
+    val calendar = Json.decodeFromString<Calendar>(json)
+
+    Column(
+        modifier = Modifier.verticalScroll(rememberScrollState())
+    ) {
+        GrandPrixLayout("1", calendar.grandPrixes.get("1"))
+        GrandPrixLayout("1", calendar.grandPrixes.get("1"))
+        GrandPrixLayout("1", calendar.grandPrixes.get("1"))
+        GrandPrixLayout("1", calendar.grandPrixes.get("1"))
     }
 }
 

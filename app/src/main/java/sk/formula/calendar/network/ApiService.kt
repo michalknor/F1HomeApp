@@ -13,7 +13,7 @@ import java.net.URL
 object ApiService {
     suspend fun fetchCalendar(context: Context, year: Int): Calendar? {
         return try {
-            withContext(Dispatchers.Main) {
+            withContext(Dispatchers.IO) {
                 val host = SharedPreferences.getHost(context)
                 val apiResponse = URL("http://$host/api/calendar?currentVersion=0&year=$year").readText()
 
