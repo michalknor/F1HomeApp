@@ -1,5 +1,6 @@
 package sk.formula.calendar
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
@@ -27,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.ExperimentalTextApi
@@ -39,13 +42,15 @@ import androidx.compose.ui.unit.TextUnitType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.decodeFromString
 import sk.formula.calendar.ui.theme.F1CalendarTheme
 import kotlinx.serialization.json.*
 import sk.formula.calendar.model.Calendar
 import sk.formula.calendar.model.GrandPrix
 import sk.formula.calendar.network.ApiService
-import kotlinx.serialization.decodeFromString
 import sk.formula.calendar.model.Event
+import sk.formula.calendar.utils.*
+import java.text.Normalizer
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,22 +88,39 @@ fun CalendarLayout(calendar: Calendar) {
     }
 }
 
+@SuppressLint("DiscouragedApi")
 @Composable
 fun GrandPrixLayout(round: String, grandPrix: GrandPrix?) {
     if (grandPrix == null) {
         return
     }
+
+    val context = LocalContext.current
+    val flagId = remember(grandPrix.location.country.abbreviation) {
+        context.resources.getIdentifier(
+            grandPrix.location.country.abbreviation,
+            "drawable",
+            context.packageName
+        )
+    }
+    val circuitId = remember(grandPrix.location.circuit) {
+        context.resources.getIdentifier(
+            Normalizer.normalize(grandPrix.location.circuit, Normalizer.Form.NFD).replace("[^\\p{ASCII}]".toRegex(), "").lowercase().replace("-", "_").replace(" ", "_"),
+            "drawable",
+            context.packageName
+        )
+    }
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
-            .paint(painterResource(id = R.drawable.monaco))
+            .paint(painterResource(id = circuitId))
             .padding(16f.dp)
     ) {
         Row(
             Modifier.padding(start = 8f.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.flag_bahrain),
+                painter = painterResource(id = flagId),
                 contentDescription = null,
                 modifier = Modifier
                     .size(50f.dp)
@@ -117,17 +139,17 @@ fun GrandPrixLayout(round: String, grandPrix: GrandPrix?) {
         
         val events: Map<String, Event> = grandPrix.events
 
-        events.get("1")?.let { ScheduleRow(it.abbreviation, it.timeFrom, "12:30 - 13:30") }
-        events.get("2")?.let { ScheduleRow(it.abbreviation, it.timeFrom, "12:30 - 13:30") }
-        events.get("3")?.let { ScheduleRow(it.abbreviation, it.timeFrom, "12:30 - 13:30") }
-        events.get("4")?.let { ScheduleRow(it.abbreviation, it.timeFrom, "12:30 - 13:30") }
-        events.get("5")?.let { ScheduleRow(it.abbreviation, it.timeFrom, "12:30 - 13:30") }
+        events["1"]?.let { ScheduleRow(it.abbreviation, it.timeFrom) }
+        events["2"]?.let { ScheduleRow(it.abbreviation, it.timeFrom) }
+        events["3"]?.let { ScheduleRow(it.abbreviation, it.timeFrom) }
+        events["4"]?.let { ScheduleRow(it.abbreviation, it.timeFrom) }
+        events["5"]?.let { ScheduleRow(it.abbreviation, it.timeFrom) }
     }
     Spacer(modifier = Modifier.height(5f.dp))
 }
 
 @Composable
-fun ScheduleRow(session: String, date: String, time: String) {
+fun ScheduleRow(session: String, timeFrom: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -139,12 +161,12 @@ fun ScheduleRow(session: String, date: String, time: String) {
             percentageWidth = 0.4f
         )
         OutlineText(
-            text = date,
+            text = formatDate(timeFrom),
             fontSize = 20f,
-            percentageWidth = 0.4f
+            percentageWidth = 0.7f
         )
         OutlineText(
-            text = time,
+            text = formatTime(timeFrom),
             fontSize = 20f,
             percentageWidth = 1f
         )
@@ -184,7 +206,6 @@ fun OutlineText(
             )
         )
 
-        // Main text in the center
         Text(
             text = text,
             color = textColor,
@@ -215,6 +236,150 @@ fun PreviewCalendar() {
                   "name": "Bahrain",
                   "abbreviation": "bh"
                 }
+              },
+              "events": {
+                "1": {
+                  "timeFrom": "2024-02-29T12:30:00",
+                  "timeTo": "2024-02-29T13:30:00",
+                  "abbreviation": "P1"
+                },
+                "2": {
+                  "timeFrom": "2024-02-29T16:00:00",
+                  "timeTo": "2024-02-29T17:00:00",
+                  "abbreviation": "P2"
+                },
+                "3": {
+                  "timeFrom": "2024-03-01T13:30:00",
+                  "timeTo": "2024-03-01T14:30:00",
+                  "abbreviation": "P3"
+                },
+                "4": {
+                  "timeFrom": "2024-03-01T17:00:00",
+                  "timeTo": null,
+                  "abbreviation": "Q"
+                },
+                "5": {
+                  "timeFrom": "2024-03-02T16:00:00",
+                  "timeTo": null,
+                  "abbreviation": "R"
+                }
+              }
+            },
+            "2": {
+              "name": "Saudi Arabian",
+              "cancelled": false,
+              "location": {
+                "circuit": "Jeddah Corniche Circuit",
+                "city": "Jeddah",
+                "country": {
+                  "name": "Saudi Arabia",
+                  "abbreviation": "sa"
+                }
+              },
+              "events": {
+                "1": {
+                  "timeFrom": "2024-03-07T14:30:00",
+                  "timeTo": "2024-03-07T15:30:00",
+                  "abbreviation": "P1"
+                },
+                "2": {
+                  "timeFrom": "2024-03-07T18:00:00",
+                  "timeTo": "2024-03-07T19:00:00",
+                  "abbreviation": "P2"
+                },
+                "3": {
+                  "timeFrom": "2024-03-08T14:30:00",
+                  "timeTo": "2024-03-08T15:30:00",
+                  "abbreviation": "P3"
+                },
+                "4": {
+                  "timeFrom": "2024-03-08T18:00:00",
+                  "timeTo": null,
+                  "abbreviation": "Q"
+                },
+                "5": {
+                  "timeFrom": "2024-03-09T18:00:00",
+                  "timeTo": null,
+                  "abbreviation": "R"
+                }
+              }
+            },
+            "3": {
+              "name": "Australian",
+              "cancelled": false,
+              "location": {
+                "circuit": "Albert Park Circuit",
+                "city": "Melbourne",
+                "country": {
+                  "name": "Australia",
+                  "abbreviation": "au"
+                }
+              },
+              "events": {
+                "1": {
+                  "timeFrom": "2024-03-22T02:30:00",
+                  "timeTo": "2024-03-22T03:30:00",
+                  "abbreviation": "P1"
+                },
+                "2": {
+                  "timeFrom": "2024-03-22T06:00:00",
+                  "timeTo": "2024-03-22T07:00:00",
+                  "abbreviation": "P2"
+                },
+                "3": {
+                  "timeFrom": "2024-03-23T02:30:00",
+                  "timeTo": "2024-03-23T03:30:00",
+                  "abbreviation": "P3"
+                },
+                "4": {
+                  "timeFrom": "2024-03-23T06:00:00",
+                  "timeTo": null,
+                  "abbreviation": "Q"
+                },
+                "5": {
+                  "timeFrom": "2024-03-24T05:00:00",
+                  "timeTo": null,
+                  "abbreviation": "R"
+                }
+              }
+            },
+            "4": {
+              "name": "Japanese",
+              "cancelled": false,
+              "location": {
+                "circuit": "Suzuka International Racing Course",
+                "city": "Suzuka",
+                "country": {
+                  "name": "Japan",
+                  "abbreviation": "jp"
+                }
+              },
+              "events": {
+                "1": {
+                  "timeFrom": "2024-04-05T04:30:00",
+                  "timeTo": "2024-04-05T05:30:00",
+                  "abbreviation": "P1"
+                },
+                "2": {
+                  "timeFrom": "2024-04-05T08:00:00",
+                  "timeTo": "2024-04-05T09:00:00",
+                  "abbreviation": "P2"
+                },
+                "3": {
+                  "timeFrom": "2024-04-06T04:30:00",
+                  "timeTo": "2024-04-06T05:30:00",
+                  "abbreviation": "P3"
+                },
+                "4": {
+                  "timeFrom": "2024-04-06T08:00:00",
+                  "timeTo": null,
+                  "abbreviation": "Q"
+                },
+                "5": {
+                  "timeFrom": "2024-04-07T07:00:00",
+                  "timeTo": null,
+                  "abbreviation": "R"
+                }
               }
             }
           }
@@ -222,13 +387,13 @@ fun PreviewCalendar() {
     """.trimIndent()
     val calendar = Json.decodeFromString<Calendar>(json)
 
-    Column(
-        modifier = Modifier.verticalScroll(rememberScrollState())
-    ) {
-        GrandPrixLayout("1", calendar.grandPrixes.get("1"))
-        GrandPrixLayout("1", calendar.grandPrixes.get("1"))
-        GrandPrixLayout("1", calendar.grandPrixes.get("1"))
-        GrandPrixLayout("1", calendar.grandPrixes.get("1"))
+    F1CalendarTheme {
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            CalendarLayout(calendar)
+        }
     }
 }
 
